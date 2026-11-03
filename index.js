@@ -182,7 +182,7 @@ app.post(`/BorrowedBooks`, async (req, res) => {
 })
 
 // Borrowed My Books Collection GET
-app.get('/BorrowedBooks/:email', async (req, res) => {
+app.get('/BorrowedBooksGet/:email', async (req, res) => {
   try {
     const { email } = req.params.email;
     const borrowedBooks = await borrowedBooksCollection.find({ email }).toArray();
@@ -194,7 +194,7 @@ app.get('/BorrowedBooks/:email', async (req, res) => {
 });
 
 // Borrowed Books Returned Collection DeleteOne
-app.delete('/BorrowedBooks/:id', async (req, res) => {
+app.delete('/BorrowedBooksReturn/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await borrowedBooksCollection.findOneAndDelete({ _id: new ObjectId(id) });
@@ -212,3 +212,5 @@ app.delete('/BorrowedBooks/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log('Server is running on port', PORT);
 });
+
+export default app;
