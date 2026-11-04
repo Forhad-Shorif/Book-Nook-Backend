@@ -28,6 +28,7 @@ const MongoDB = await connectToMongoDB();
 const db = MongoDB.db("book_nook");
 const booksCollection = db.collection("allbooks");
 const borrowedBooksCollection = db.collection("borrowed-books");
+const RivewCollection = db.collection("Review");
 
 // All Books GET
 app.get('/books', async (req, res) => {
@@ -103,7 +104,7 @@ app.patch('/UpdateBook/:id', async (req, res) => {
 });
 
 // Reduce the quantity of the book in the main collection
-app.post('/BookCopesReduce/:id', async (req, res) => {
+app.post('/BookCopesDecrease/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const borrowedBook = req.body;
@@ -174,7 +175,7 @@ app.post(`/BorrowedBooks`, async (req, res) => {
   try {
     const newBorrowedBook = req.body;
     const result = await borrowedBooksCollection.insertOne(newBorrowedBook);
-    cosole.log('Borrowed book added:', result);
+    console.log('Borrowed book added:', result);
     res.status(201).send(result);
   } catch (err) {
     res.status(500).send('Error adding borrowed book');
@@ -206,6 +207,45 @@ app.delete('/BorrowedBooksReturn/:id', async (req, res) => {
   catch (err) {
     console.error(err);
     res.status(500).send('Error deleting borrowed book');
+  }
+});
+
+// Borrowed Books InsertOne
+// Review Collection InsertOne
+app.post('/ReviewPost', async (req, res) => {
+  try {
+    const newReview = req.body;
+    const result = await RivewCollection.insertOne(newReview);
+    res.status(201).send(result);
+  } 
+  catch (err) {
+    console.error(err);
+    res.status(500).send('Error adding review');
+  }
+});
+
+app.get('/GetReview', async (req , res) =>{
+  try {
+    const reviews = await RivewCollection.find().sort({ createdAt: -1 }).limit(6).toArray();
+    res.send(reviews);
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching reviews');
+  }
+});
+
+app.delete('/DeleteReview/:id', async (req , res) =>{
+  try {
+    const { id } = req.params;
+    const result = await RivewCollection.findOneAndDelete({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).send('Review not found');
+    }
+    res.send(result);
+  }
+  catch (err) {
+    res.status(500).send('Error deleting review');
   }
 });
 
