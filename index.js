@@ -3,8 +3,8 @@ import cors from 'cors'
 import express from 'express';
 import dotenv from 'dotenv/config';
 
-// import dns from "node:dns";
-// dns.setServers(["8.8.8.8", "8.8.4.4"]);
+import dns from "node:dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const app = express();
 app.use(cors());
@@ -174,9 +174,9 @@ app.post(`/BorrowedBooks`, async (req, res) => {
   try {
     const newBorrowedBook = req.body;
     const result = await borrowedBooksCollection.insertOne(newBorrowedBook);
+    cosole.log('Borrowed book added:', result);
     res.status(201).send(result);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error adding borrowed book');
   }
 })
