@@ -3,6 +3,10 @@ import cors from 'cors'
 import express from 'express';
 import dotenv from 'dotenv/config';
 
+import dns from "node:dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+
 const app = express();
 app.use(cors({
   origin: [
@@ -40,7 +44,6 @@ app.get('/books', async (req, res) => {
     const books = await booksCollection.find().toArray();
     res.send(books);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error fetching books');
   }
 });
@@ -78,7 +81,6 @@ app.post('/NewBook', async (req, res) => {
     const result = await booksCollection.insertOne(newBook);
     res.status(201).send(result);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error adding book');
   }
 });
@@ -93,7 +95,6 @@ app.patch('/UpdateBook/:id', async (req, res) => {
             { _id: new ObjectId(id) },
             { $set: updatedBook }
         );
-        console.log(result);
 
         if (result.matchedCount === 0) {
             return res.status(404).send('Book not found');
@@ -102,33 +103,28 @@ app.patch('/UpdateBook/:id', async (req, res) => {
         res.send(result);
 
     } catch (err) {
-        console.error(err);
         res.status(500).send('Error updating book');
     }
 });
 
 // Reduce the quantity of the book in the main collection
-app.post('/BookCopesDecrease/:id', async (req, res) => {
+app.patch('/BookCopesDecrease/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const borrowedBook = req.body;
+
     const result = await booksCollection.findOneAndUpdate(
       { _id: new ObjectId(id), quantity: { $gt: 0 } },
       { $inc: { quantity: -1 } },
       { returnDocument: 'after' }
     );
-    if (!result) {
-      return res.status(404).send('Book not found or out of stock');
-    }
-    res.send(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Error borrowing book');
+    return res.status(500).json();
   }
 });
 
+
 // Increase the quantity of the book in the main collection
-app.post('/BookCopesIncrease/:id', async (req, res) => {
+app.patch('/BookCopesIncrease/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const result = await booksCollection.findOneAndUpdate(
@@ -137,11 +133,9 @@ app.post('/BookCopesIncrease/:id', async (req, res) => {
       { returnDocument: 'after' }
     );
     if (!result) {
-      return res.status(404).send('Book not found');
+      return res.status(404).json();
     }
-    res.send(result);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error returning book');
   }
 });
@@ -156,7 +150,6 @@ app.delete('/DeleteBook/:id', async (req, res) => {
     }
     res.send(result);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error deleting book');
   }
 });
@@ -168,7 +161,6 @@ app.get('/MyBooks/:email', async (req, res) => {
     const books = await booksCollection.find({ "addedBy.email": Email }).toArray();
     res.send(books);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error fetching my books');
   }
 });
@@ -179,7 +171,6 @@ app.post(`/BorrowedBooks`, async (req, res) => {
   try {
     const newBorrowedBook = req.body;
     const result = await borrowedBooksCollection.insertOne(newBorrowedBook);
-    console.log('Borrowed book added:', result);
     res.status(201).send(result);
   } catch (err) {
     res.status(500).send('Error adding borrowed book');
@@ -193,7 +184,6 @@ app.get('/BorrowedBooksGet/:email', async (req, res) => {
     const borrowedBooks = await borrowedBooksCollection.find({ email }).toArray();
     res.send(borrowedBooks);
   } catch (err) {
-    console.error(err);
     res.status(500).send('Error fetching borrowed books');
   }
 });
@@ -209,7 +199,6 @@ app.delete('/BorrowedBooksReturn/:id', async (req, res) => {
     res.send(result);
   }
   catch (err) {
-    console.error(err);
     res.status(500).send('Error deleting borrowed book');
   }
 });
@@ -223,7 +212,7 @@ app.post('/ReviewPost', async (req, res) => {
     res.status(201).send(result);
   } 
   catch (err) {
-    console.error(err);
+ 
     res.status(500).send('Error adding review');
   }
 });
@@ -234,7 +223,6 @@ app.get('/GetReview', async (req , res) =>{
     res.send(reviews);
   }
   catch (err) {
-    console.error(err);
     res.status(500).send('Error fetching reviews');
   }
 });
