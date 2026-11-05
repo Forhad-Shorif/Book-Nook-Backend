@@ -4,7 +4,14 @@ import express from 'express';
 import dotenv from 'dotenv/config';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://forhad-shorif-book-nook.vercel.app"
+  ],
+  methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+  credentials: true
+}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 8000;
