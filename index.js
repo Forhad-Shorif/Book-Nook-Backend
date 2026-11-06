@@ -2,11 +2,7 @@ import { MongoClient, ObjectId } from 'mongodb';
 import cors from 'cors'
 import express from 'express';
 import dotenv from 'dotenv/config';
-
-import dns from "node:dns";
 import { createRemoteJWKSet, jwtVerify } from 'jose';
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
-
 
 const app = express();
 app.use(cors({
