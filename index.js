@@ -52,6 +52,7 @@ const varify = async (req, res, next) => {
      const { payload } = await jwtVerify(token , JWKS);
   next();
   }catch(error){
+    console.log("veryfy token error",error)
     return res.status(500).send({message: "Internal Server Issue"})
   }
 };
