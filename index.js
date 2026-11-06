@@ -21,18 +21,18 @@ const PORT = process.env.PORT || 8000;
 
 const client = new MongoClient(process.env.MONGODB_SECRET_URL);
 
-// export async function connectToMongoDB() {
-//   try {
-//     await client.connect();
-//     console.log("You successfully connected to MongoDB!");
-//     return client;
-//   } catch (err) {
-//     console.dir(err);
-//   }
-// }
+export async function connectToMongoDB() {
+  try {
+    await client.connect();
+    console.log("You successfully connected to MongoDB!");
+    return client;
+  } catch (err) {
+    console.dir(err);
+  }
+}
 
-// const MongoDB = await connectToMongoDB();
-const db = client.db("book_nook");
+const MongoDB = await connectToMongoDB();
+const db = MongoDB.db("book_nook");
 const booksCollection = db.collection("allbooks");
 const borrowedBooksCollection = db.collection("borrowed-books");
 const RivewCollection = db.collection("Review");
