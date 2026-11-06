@@ -4,6 +4,7 @@ import express from 'express';
 import dotenv from 'dotenv/config';
 
 import dns from "node:dns";
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 
@@ -38,8 +39,27 @@ const booksCollection = db.collection("allbooks");
 const borrowedBooksCollection = db.collection("borrowed-books");
 const RivewCollection = db.collection("Review");
 
+const varify = async (req, res, next) => {
+  const AuthHeader = req.headers.authorization;
+
+  if (!AuthHeader) {
+    return res.status(401).send({ message: "Unauthorized access" });
+  }
+
+  const token = AuthHeader.split(" ")[1];
+
+  const JWKS = createRemoteJWKSet(new URL('http://localhost:3000/api/auth/jwks'))
+
+  try{
+     const { payload } = await jwtVerify(token , JWKS);
+  next();
+  }catch(error){
+    return res.status(500).send({message: "Internal Server Issue"})
+  }
+};
+
 // All Books GET
-app.get('/books', async (req, res) => {
+app.get('/books',varify, async (req, res) => {
   try {
     const books = await booksCollection.find().toArray();
     res.send(books);
@@ -64,7 +84,7 @@ app.get('/LatestBooks', async (req, res) => {
 });
 
 // Search One Book GET for Details page
-app.get('/Books/:id', async (req, res) => {
+app.get('/Books/:id', varify,async (req, res) => {
 
   const { id } = req.params;
   const Books = await booksCollection.findOne({ _id: new ObjectId(id) })
@@ -113,15 +133,16 @@ app.patch('/BookCopesDecrease/:id', async (req, res) => {
     const { id } = req.params;
 
     const result = await booksCollection.findOneAndUpdate(
-      { _id: new ObjectId(id), quantity: { $gt: 0 } },
-      { $inc: { quantity: -1 } },
+      { _id: new ObjectId(id), totalCopies: { $gt: 0 } },
+      { $inc: { totalCopies: -1 } },
       { returnDocument: 'after' }
     );
+
+    res.send(result);
   } catch (err) {
-    return res.status(500).json();
+    res.status(500).send({ message: "Server error" });
   }
 });
-
 
 // Increase the quantity of the book in the main collection
 app.patch('/BookCopesIncrease/:id', async (req, res) => {
@@ -129,12 +150,16 @@ app.patch('/BookCopesIncrease/:id', async (req, res) => {
     const { id } = req.params;
     const result = await booksCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
-      { $inc: { quantity: 1 } },
+      { $inc: { totalCopies: 1 } },
       { returnDocument: 'after' }
     );
+    
     if (!result) {
-      return res.status(404).json();
+      return res.status(404).json({ message: "Book not found" });
     }
+
+    // সফল হলে আপডেট হওয়া ডাটা ফ্রন্টএন্ডে পাঠিয়ে দিন
+    res.send(result);
   } catch (err) {
     res.status(500).send('Error returning book');
   }
@@ -155,7 +180,7 @@ app.delete('/DeleteBook/:id', async (req, res) => {
 });
 
 // My Books Collection Get
-app.get('/MyBooks/:email', async (req, res) => {
+app.get('/MyBooks/:email',varify, async (req, res) => {
   try {
     const Email = req.params.email;
     const books = await booksCollection.find({ "addedBy.email": Email }).toArray();
