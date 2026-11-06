@@ -45,8 +45,7 @@ const varify = async (req, res, next) => {
   }
 
   const token = AuthHeader.split(" ")[1];
-
-  const JWKS = createRemoteJWKSet(new URL('http://localhost:3000/api/auth/jwks'))
+  const JWKS = createRemoteJWKSet(new URL(`${process.env.CLIENT_URL}/api/auth/jwks`))
 
   try{
      const { payload } = await jwtVerify(token , JWKS);
