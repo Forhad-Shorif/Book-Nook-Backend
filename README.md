@@ -1,51 +1,70 @@
-# 📚 BookNook Backend
+<div align="center">
 
-Welcome to the backend server of **BookNook**! This is a robust and secure RESTful API built to handle all the server-side logic, database operations, and inventory management for the BookNook library platform.
+# ⚙️ BookNook — Enterprise Backend Server
 
----
+**A robust, high-performance, and secure RESTful API engineered to power the BookNook digital library ecosystem.**
 
-## 🚀 About The Project
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)](https://jwt.io/)
 
-BookNook is designed to be a complete community library system where users can explore books, add new titles, manage their personal collections, and borrow or return books seamlessly. 
+[🌐 **Explore Live API**](https://book-nook-backend-forhad.vercel.app/) • [💻 **Frontend Repository**](https://github.com/Forhad-Shorif/Book-Nook)
 
-This backend securely connects with MongoDB Atlas to handle real-time inventory adjustments, user-specific queries, and fast data retrieval.
-
----
-
-## 🛠️ Built With
-
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB (using the official MongoDB Native Driver)
-- **Middleware & Security:** CORS, dotenv, and custom DNS resolution for smooth database connection stability.
+</div>
 
 ---
 
-## 📡 API Endpoints Overview
+## 🌟 About The Backend
 
-Here is a quick look at the available routes in this backend:
-
-### **Books Management**
-- `GET /books` - Fetch all books from the inventory
-- `GET /LatestBooks` - Get the 10 most recently added books
-- `GET /Books/:id` - Fetch details for a specific book
-- `POST /NewBook` - Add a new book to the database
-- `PATCH /UpdateBook/:id` - Update existing book information
-- `DELETE /DeleteBook/:id` - Remove a book from the collection
-- `GET /MyBooks/:email` - Get all books published by a specific user
-
-### **Inventory & Borrowing System**
-- `POST /BookCopesReduce/:id` - Decrease available book quantity when borrowed
-- `POST /BookCopesIncrease/:id` - Increase book quantity when returned
-- `GET /BorrowedBooks/:email` - Retrieve all books borrowed by a specific user
-- `POST /BorrowedBooks` - Record a new book borrow action
-- `DELETE /BorrowedBooks/:id` - Remove a borrow record (Return book)
+The **BookNook Backend** serves as the powerhouse of the entire platform. Built with asynchronous Node.js and Express.js architecture, it safely handles secure user authentication, real-time inventory adjustments, borrowing history tracking, and high-speed MongoDB Atlas database operations. 
 
 ---
 
-## ⚙️ How to Run Locally
+## 🛠️ Built With & Core Technologies
 
-If you want to run or test this project on your local machine, follow these simple steps:
+- **Runtime Environment:** [Node.js](https://nodejs.org/)
+- **Web Framework:** [Express.js](https://expressjs.com/) for clean middleware routing and endpoint handling.
+- **Database:** [MongoDB Atlas](https://www.mongodb.com/) utilizing optimized database queries and connection pooling.
+- **Security & Middleware:** CORS configuration, environment variable management via `dotenv`, and custom Google DNS resolution (`8.8.8.8` / `1.1.1.1`) to ensure zero-downtime database connectivity.
+
+---
+
+## 📡 API Endpoints Architecture
+
+Here is the complete overview of the RESTful endpoints available in this server:
+
+### **📚 Books Portfolio Management**
+- `GET /books` — Retrieve the comprehensive library book inventory.
+- `GET /LatestBooks` — Fetch the 10 most recently published books for the home feed.
+- `GET /Books/:id` — Get detailed metadata for a specific book.
+- `POST /NewBook` — Securely add a new book to the database.
+- `PATCH /UpdateBook/:id` — Update existing book information (CRUD).
+- `DELETE /DeleteBook/:id` — Remove a specific book from the platform.
+- `GET /MyBooks/:email` — Fetch all books uploaded/published by a specific user.
+
+### **🔄 Inventory & Borrowing System**
+- `POST /BookCopesReduce/:id` — Atomically decrease available book stock upon borrowing.
+- `POST /BookCopesIncrease/:id` — Increment book stock when a user returns a title.
+- `GET /BorrowedBooks/:email` — Retrieve active borrowing history for a user.
+- `POST /BorrowedBooks` — Register a new book borrowing transaction.
+- `DELETE /BorrowedBooks/:id` — Conclude a borrow record upon book return.
+
+### **✍️ Community Reviews System**
+- `GET /GetReview` — Fetch all public community reviews with optimized revalidation.
+- `POST /AddReview` — Post a verified review for a read book.
+- `DELETE /DeleteReview/:id` — Author-protected review deletion endpoint.
+
+---
+
+## ⚙️ Getting Started Locally
+
+Follow these steps to run the backend server locally on your development machine:
+
+### Prerequisites
+Make sure you have installed:
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- Git
 
 ### 1. Clone the Repository
 ```bash
