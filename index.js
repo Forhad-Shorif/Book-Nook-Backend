@@ -27,7 +27,7 @@ export async function connectToMongoDB() {
     console.log("You successfully connected to MongoDB!");
     return client;
   } catch (err) {
-    console.dir(err);
+     return ;
   }
 }
 
@@ -51,7 +51,6 @@ const varify = async (req, res, next) => {
      const { payload } = await jwtVerify(token , JWKS);
   next();
   }catch(error){
-    console.log("veryfy token error",error)
     return res.status(500).send({message: "Internal Server Issue"})
   }
 };
